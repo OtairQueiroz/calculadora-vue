@@ -1,13 +1,13 @@
 const { createApp } = Vue;
 
 createApp({
-    // Declaração dos dados da aplicação Vue
+    
     data() {
         return {
-            display: '0', // Valor exibido na calculadora
-            numeroAtual: null, // Número atual sendo inserido
-            numeroAnterior: null, // Número anterior ao pressionar um operador
-            operador: null, // Último operador pressionado
+            display: '0', // Valor inicial exibido na calculadora
+            numeroAtual: null, // Número que está atualmente sendo inserido na calculadora
+            numeroAnterior: null, // Número que estava sendo exibido antes de pressionar um operador
+            operador: null, // Último operador pressionado 
             aguardandoOperacao: false // Indica se estamos esperando uma nova operação após pressionar um operador
         };
     },
@@ -19,21 +19,26 @@ createApp({
             } else if (botao === '=') {
                 this.lidarIgual(); // Calcular o resultado se for pressionado o botão de igual
             } else if (['+', '-', '*', '/'].includes(botao)) {
-                this.lidarOperador(botao); // Lidar com operadores
+                this.lidarOperador(botao); // Lidar com os operadores 
+            } else if (botao === '.') {
+                this.lidarDecimal(); // Lidar com o ponto decimal
             } else {
-                this.lidarNumero(botao); // Lidar com números
+                this.lidarNumero(botao); // Lidar com os números
             }
         },
         // Função para lidar com a pressão de um operador
         lidarOperador(botao) {
-            if (this.operador !== null && !this.aguardandoOperacao) {
-                this.lidarIgual(); // Se já houver um operador e não estivermos esperando uma nova operação, calcular o resultado atual
+            if (!this.aguardandoOperacao) {
+                if (this.operador !== null) {
+                    this.lidarIgual(); // Se já houver um operador, calcular o resultado atual antes de continuar
+                } else {
+                    this.numeroAnterior = parseFloat(this.display); // Atualizar o número anterior antes de prosseguir
+                }
+                this.operador = botao;
+                this.aguardandoOperacao = true;
             } else {
-                this.numeroAnterior = parseFloat(this.display); // Armazenar o número atual como número anterior
+                this.operador = botao; // Se estivermos esperando uma nova operação, apenas atualize o operador
             }
-            this.operador = botao; // Armazenar o operador pressionado
-            this.aguardandoOperacao = true; // Indicar que estamos esperando uma nova operação
-            this.display = this.numeroAnterior !== null ? this.numeroAnterior + ' ' + this.operador : '0'; // Atualizar a exibição com o número anterior e o operador
         },
         // Função para lidar com a pressão de um número
         lidarNumero(numero) {
@@ -41,31 +46,29 @@ createApp({
                 this.display = numero; // Se estivermos esperando uma nova operação, substituir o número exibido
                 this.aguardandoOperacao = false; // Indicar que não estamos mais esperando uma nova operação
             } else if (this.display === '0') {
-                this.display = numero; // Se o número exibido for 0, substituí-lo pelo novo número
+                this.display = numero; // Se o número exibido for 0, substituir pelo novo número
             } else {
                 this.display += numero; // Adicionar o número pressionado ao número exibido
             }
         },
-        // Função para lidar com a pressão do botão de decimal
+        // Função para lidar com a pressão do ponto decimal
         lidarDecimal() {
-            if (this.aguardandoOperacao) {
-                this.display = '0.'; // Se estivermos esperando uma nova operação, exibir "0."
-                this.aguardandoOperacao = false; // Indicar que não estamos mais esperando uma nova operação
-            } else if (!this.display.includes('.')) {
+            if (!this.display.includes('.')) {
                 this.display += '.'; // Adicionar um ponto decimal se ainda não houver um
             }
         },
         // Função para lidar com a pressão do botão de igual
         lidarIgual() {
             if (this.operador && !this.aguardandoOperacao) {
-                const operacao = this.numeroAnterior + ' ' + this.operador + ' ' + parseFloat(this.display); // Corrigido para parseFloat()
-                this.display = eval(operacao); // Calcular o resultado da operação
-                this.operador = null; // Limpar o operador após a operação ser concluída
-                this.numeroAnterior = null; // Limpar o número anterior após a operação ser concluída
-                this.aguardandoOperacao = true; // Indicar que estamos esperando uma nova operação após o resultado ser exibido
+                const operacao = this.numeroAnterior + ' ' + this.operador + ' ' + parseFloat(this.display);
+                this.display = eval(operacao);
+                this.numeroAtual = parseFloat(this.display); // Atualizar o número atual com o resultado
+                this.numeroAnterior = this.numeroAtual; // Atualizar o número anterior com o resultado
+                this.operador = null;
+                this.aguardandoOperacao = true;
             }
         },
-        // Função para lidar com a pressão do botão de limpar (AC)
+        // Função para lidar com a pressão do botão de limpar 
         lidarClear() {
             this.display = '0'; // Resetar a exibição para 0
             this.numeroAtual = null; // Limpar o número atual
@@ -74,4 +77,4 @@ createApp({
             this.aguardandoOperacao = false; // Indicar que não estamos esperando uma nova operação
         }
     }
-}).mount("#app"); // Montar a aplicação Vue no elemento HTML com o ID "app"
+}).mount("#app"); 
