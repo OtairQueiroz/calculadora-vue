@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+<div id="app">
+    <div class="calculadora">
+        <div class="display">
+            {{ display }}
+        </div>
+        <div class="linha">
+            <button class="operador" @click="lidarClear('AC')">AC</button>
+        </div>
+        <div class="linha">
+            <button @click="lidarNumero('7')">7</button>
+            <button @click="lidarNumero('8')">8</button>
+            <button @click="lidarNumero('9')">9</button>
+            <button class="operador" @click="lidarOperador('/')">/</button>
+        </div>
+        <div class="linha">
+            <button @click="lidarNumero('4')">4</button>
+            <button @click="lidarNumero('5')">5</button>
+            <button @click="lidarNumero('6')">6</button>
+            <button class="operador" @click="lidarOperador('*')">x</button>
+        </div>
+        <div class="linha">
+            <button @click="lidarNumero('1')">1</button>
+            <button @click="lidarNumero('2')">2</button>
+            <button @click="lidarNumero('3')">3</button>
+            <button class="operador" @click="lidarOperador('-')">-</button>
+        </div>
+        <div class="linha">
+            <button @click="lidarDecimal('.')">.</button>
+            <button @click="lidarNumero('0')">0</button>
+            <button class="igual" @click="lidarIgual('=')">=</button>
+            <button class="operador" @click="lidarOperador('+')">+</button>
+        </div>
+    </div>
+</div>
+<script src="./index.js"></script>
+</body>
+</html>
